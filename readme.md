@@ -17,6 +17,10 @@ If the script is not shown in the Script Manager, try the 'Refresh Script List` 
   * Select a location for the changed file. If the file does not exist, the current executable is copied there and then modified. Otherwise, the existing file is patched.
   * Check the results!
 
+Once you have saved the first patched location, you can select another location, re-run the script and chose the same target file.
+The script will open the file again and apply the second patch.
+These steps can be repeated multiple times.
+
 ## Project status
 I have tested this script with PE32, PE64, ELF32 and ELF64 executables (all x86), but I would still consider it experimental.
 Executable formats are complex, and I can not guarantee that the script will always work error free.
@@ -25,9 +29,11 @@ Have a look at the known problems (see below), and always check if the modified 
 ## Bugs/Limitations
 ### Relocations
 The `SavePatch.py` script currently ignores [relocations](https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#the-reloc-section-image-only).
-This means that if a instruction that gets relocated is modified and written back, strange things might happen.
+Existing relocation entries are not modified, and no new relocation entries are added.
+
+This means that if a instruction that gets relocated is written back using this script, strange things might happen.
 Similar problems appear if you insert an instruction that needs to be relocated.
 
-For the most part this is a problem with access to global/static variables on 32 bit x86.
+For the most part this is a problem with access to global/static variables in x86_32 binaries.
 
-The only workaround is to avoid touching any instructions that are relocated.
+At the moment, the only workaround here is to avoid touching any instructions that are relocated.
