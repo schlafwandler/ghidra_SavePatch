@@ -12,8 +12,9 @@ If the script is not shown in the Script Manager, try the 'Refresh Script List` 
 
 ## Usage
   * Make the change to the executable
-  * Select the patched lines in the listing window (not just highlight; **select**)
+  * (optional) Select the patched lines in the listing window (not just highlight; **select**)
   * Run the SavePatch script
+  * If you did not select the patched area, you will be asked for its start address and lenght
   * Select a location for the changed file. If the file does not exist, the current executable is copied there and then modified. Otherwise, the existing file is patched.
   * Check the results!
 
