@@ -5,53 +5,18 @@
 #@menupath 
 #@toolbar 
 
-import ghidra.app.util.bin.MemoryByteProvider as MemoryByteProvider
-import generic.continues.RethrowContinuesFactory as RethrowContinuesFactory
 import shutil
 import jarray
 import os
 
-def imagebase_offset_to_file_offset_ELF(imagebase_offset):
-    import ghidra.app.util.bin.format.elf as elf
+def address_to_file_offset(address):
+    tested_file_formats = [u'Executable and Linking Format (ELF)',u'Portable Executable (PE)']
+    if currentProgram.getExecutableFormat() not in tested_file_formats:
+        print('Warning: this script was not tested for executable format "%s"'%(currentProgram.getExecutableFormat()))
 
-    mem_provider = MemoryByteProvider(currentProgram.getMemory(), currentProgram.getImageBase())
-    elffile = elf.ElfHeader.createElfHeader(RethrowContinuesFactory.INSTANCE,mem_provider)
-
-    try:
-        elffile.parse()
-    except:
-        pass
-
-    segment = elffile.getProgramLoadHeaderContaining(imagebase_offset)
-    segment_offset = segment.getOffset()
-    segment_RVA = segment.getVirtualAddress()
-    file_offset = segment_offset + imagebase_offset - segment_RVA
-    return file_offset
-
-def imagebase_offset_to_file_offset_PE(imagebase_offset):
-    import ghidra.app.util.bin.format.pe as pe
-    mem_provider = MemoryByteProvider(currentProgram.getMemory(), currentProgram.getImageBase())
-    pefile = pe.PortableExecutable.createPortableExecutable(
-                            RethrowContinuesFactory.INSTANCE,
-                            mem_provider,
-                            pe.PortableExecutable.SectionLayout.MEMORY)
-    
-    section = pefile.getNTHeader().getFileHeader().getSectionHeaderContaining(imagebase_offset)
-    section_offset = section.getPointerToRawData()
-    section_RVA = section.getVirtualAddress()
-    file_offset = section_offset + imagebase_offset - section_RVA
-    return file_offset
-    
-def imagebase_offset_to_file_offset(imagebase_offset):
-    monitor.setMessage("Calculating file offset")
-    file_format = currentProgram.getExecutableFormat()
-    if file_format == u'Executable and Linking Format (ELF)':
-        return imagebase_offset_to_file_offset_ELF(imagebase_offset)
-    elif file_format == u'Portable Executable (PE)':
-        return imagebase_offset_to_file_offset_PE(imagebase_offset)
-    else:
-        print("Unsupported executable format: %s"%(file_format))
-        return None
+    mem = currentProgram.getMemory()
+    sourceinfo = mem.getAddressSourceInfo(address)
+    return sourceinfo.getFileOffset()
 
 def getPatchRange():
     if currentSelection is not None:
@@ -76,7 +41,7 @@ def main():
 
     imagebase_offset    =   start_addr.getOffset() - currentProgram.getImageBase().getOffset()
 
-    file_offset = imagebase_offset_to_file_offset(imagebase_offset)
+    file_offset = address_to_file_offset(start_addr)
     if not file_offset:
         print("Failed to get file offset. Aborting.")
         return

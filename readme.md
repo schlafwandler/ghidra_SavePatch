@@ -1,7 +1,8 @@
 # SavePatch
 ## A Ghidra script to save small patches back to the executable file
-This ghidra script writes small modifications made in a PE or ELF executable back to the analysed file.
+This ghidra script writes small modifications made in a executable back to the analysed file.
 This allows you to edit a binary and save the modifications, without having to reload the file in raw mode.
+The script was developed for ELF and PE files, but *might* work with other file types as well.
 
 This is my personal attempt at a workaround for issues [#19](https://github.com/NationalSecurityAgency/ghidra/issues/19)/[#530](https://github.com/NationalSecurityAgency/ghidra/issues/530).
 
@@ -28,6 +29,8 @@ Executable formats are complex, and I can not guarantee that the script will alw
 Have a look at the known problems (see below), and always check if the modified file works as expected.
 
 ## Bugs/Limitations
+### File types
+`SavePatch.py` has been tested with ELF and PE files. It *might* work with other file types, but this is not guaranteed.
 ### Relocations
 The `SavePatch.py` script currently ignores [relocations](https://docs.microsoft.com/en-us/windows/win32/debug/pe-format#the-reloc-section-image-only).
 Existing relocation entries are not modified, and no new relocation entries are added.
