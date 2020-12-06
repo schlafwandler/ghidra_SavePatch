@@ -50,6 +50,10 @@ def main():
 
     monitor.setMessage("Waiting for user input")
     orig_path   = str(currentProgram.getExecutablePath())
+    
+    if os.name == "nt":
+        orig_path = orig_path[1:]
+    
     output_path = str(askFile("Select output file name","Save changes"))
 
     if not os.path.isfile(output_path):
