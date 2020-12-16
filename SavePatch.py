@@ -52,7 +52,7 @@ def main():
     orig_path   = str(currentProgram.getExecutablePath())
     
     # workaround for https://github.com/NationalSecurityAgency/ghidra/pull/2220
-    if os.name == "nt" and orig_path[0] == "/":
+    if os.sep == "\\" and orig_path[0] == "/":
         orig_path = orig_path[1:]
     
     output_path = str(askFile("Select output file name","Save changes"))
